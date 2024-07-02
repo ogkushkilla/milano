@@ -141,6 +141,7 @@ module.exports = {
         code: 120,
         tabWidth: 2,
         ignoreUrls: true,
+        ignoreStrings: true,
         ignorePattern: 'goog.(module|require)',
       },
     ],
