@@ -1,5 +1,5 @@
-@use '../../scss/varibles' as *;
-@use '../../scss/media' as *;
+@use '@scss/varibles' as *;
+@use '@scss/media' as *;
 
 .cart {
   align-self: start;
@@ -17,7 +17,6 @@
     top: 0;
     right: 0;
     bottom: 0;
-    overflow-y: auto;
     height: 100vh;
   }
 
@@ -38,6 +37,7 @@
 
     @media (max-width: 1360px) {
       height: 100%;
+      overflow-y: auto;
     }
 
     @include mobile {
