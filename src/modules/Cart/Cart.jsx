@@ -1,18 +1,20 @@
 import './cart.scss';
 import { CartItem } from '../CartItem/CartItem';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleCart, processOrder } from '../../redux/cartSlice';
+import { toggleCart } from '../../redux/cartSlice';
+import { openModal } from '../../redux/orderSlice';
 
 export const Cart = () => {
-  const isOpen = useSelector(state => state.cart.isOpen);
   const dispatch = useDispatch();
+  const isOpen = useSelector(state => state.cart.isOpen);
+  const cartItems = useSelector(state => state.cart.items);
 
   const handlerCartClose = () => {
     dispatch(toggleCart(false));
   };
 
-  const handlerOrder = () => {
-    dispatch(processOrder());
+  const handlerOpenOrder = () => {
+    dispatch(openModal());
   };
 
   if (!isOpen) return null;
@@ -34,11 +36,15 @@ export const Cart = () => {
         <p className="cart__date-delivery">сегодня в 14:00</p>
 
         <ul className="cart__list">
-          <CartItem />
+          {cartItems.map(item => (
+            <li key={item.id} className="cart__item">
+              <CartItem {...item} />
+            </li>
+          ))}
         </ul>
 
         <div className="cart__footer">
-          <button className="cart__order-btn" onClick={handlerOrder}>
+          <button className="cart__order-btn" onClick={handlerOpenOrder}>
             Оформить
           </button>
           <p className="cart__price cart__price_total">0&nbsp;₽</p>

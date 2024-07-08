@@ -1,7 +1,14 @@
 import './filter.scss';
 import { Choices } from '../Choices/Choices';
+import { useState } from 'react';
 
 export const Filter = () => {
+  const [openChoice, setOpenChoice] = useState(null);
+
+  const handleChoicesToggle = choice => {
+    setOpenChoice(openChoice === choice ? null : choice);
+  };
+
   return (
     <section className="filter">
       <h2 className="visually-hidden"></h2>
@@ -32,14 +39,24 @@ export const Filter = () => {
           </fieldset>
 
           <fieldset className="filter__group filter__group_choices">
-            <Choices buttonLabel={'Цена'} className="filter__choices_type">
+            <Choices
+              buttonLabel={'Цена'}
+              className="filter__choices_type"
+              isOpen={openChoice === 'price'}
+              handleChoicesToggle={() => handleChoicesToggle('price')}
+            >
               <fieldset className="filter__price">
                 <input className="filter__input-price" type="text" name="minPrice" placeholder="от" />
                 <input className="filter__input-price" type="text" name="maxPrice" placeholder="до" />
               </fieldset>
             </Choices>
 
-            <Choices buttonLabel={'Тип товара'} className="filter__choices_type">
+            <Choices
+              buttonLabel={'Тип товара'}
+              className="filter__choices_type"
+              isOpen={openChoice === 'type'}
+              handleChoicesToggle={() => handleChoicesToggle('type')}
+            >
               <ul className="filter__type-list">
                 <li className="filter__type-item">
                   <button className="filter__type-button" type="button">
