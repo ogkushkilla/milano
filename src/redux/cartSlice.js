@@ -13,13 +13,13 @@ const cartSlice = createSlice({
       state.isOpen = !state.isOpen;
     },
     addItemToCart(state, action) {
-      const { id, img, title, dateDelivery, price, amount = 1 } = action.payload;
+      const { id, photoUrl, name, dateDelivery, price, amount = 1 } = action.payload;
       const existingItem = state.items.find(item => item.id === id);
 
       if (existingItem) {
         existingItem.amount = amount;
       } else {
-        state.items.push({ id, img, title, dateDelivery, price, amount });
+        state.items.push({ id, photoUrl, name, dateDelivery, price, amount });
       }
 
       localStorage.setItem('cartItems', JSON.stringify(state.items));

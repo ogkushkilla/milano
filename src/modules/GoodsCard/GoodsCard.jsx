@@ -10,6 +10,18 @@ export const GoodsCard = ({ id, photoUrl, name, dateDelivery, price }) => {
     dispatch(addItemToCart({ id, photoUrl, name, dateDelivery, price }));
   };
 
+  const handlerButtonHover = e => {
+    const target = e.target;
+
+    if (target.textContent.includes('₽')) {
+      target.classList.add('card__button-hover');
+      target.textContent = 'В корзину';
+    } else {
+      target.classList.remove('card__button-hover');
+      target.textContent = `${price} ₽`;
+    }
+  };
+
   return (
     <article className="goods__card card">
       <img className="card__image" src={`${API_URL}${photoUrl}`} alt={name} />
@@ -17,7 +29,12 @@ export const GoodsCard = ({ id, photoUrl, name, dateDelivery, price }) => {
         <h3 className="card__title">{name}</h3>
         <div className="card__footer">
           <p className="card__date-delivery">{dateDelivery}</p>
-          <button className="card__button" onClick={handlerAddToCart}>
+          <button
+            className="card__button"
+            onClick={handlerAddToCart}
+            onMouseEnter={handlerButtonHover}
+            onMouseLeave={handlerButtonHover}
+          >
             {price}&nbsp;₽
           </button>
         </div>

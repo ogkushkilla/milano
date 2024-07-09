@@ -1,12 +1,22 @@
 import './filter.scss';
 import { Choices } from '../Choices/Choices';
 import { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { changeParams, fetchGoods } from '../../redux/goodsSlice';
 
 export const Filter = () => {
+  const dispatch = useDispatch();
   const [openChoice, setOpenChoice] = useState(null);
 
   const handleChoicesToggle = choice => {
     setOpenChoice(openChoice === choice ? null : choice);
+  };
+
+  const handleClick = e => {
+    const target = e.target;
+
+    dispatch(fetchGoods(`type=${target.value}`));
+    dispatch(changeParams(target.value));
   };
 
   return (
@@ -22,17 +32,32 @@ export const Filter = () => {
               defaultValue="bouquets"
               id="flower"
               defaultChecked
+              onClick={handleClick}
             />
             <label className="filter__label filter__label_flower" htmlFor="flower">
               Цветы
             </label>
 
-            <input className="filter__radio" type="radio" name="type" defaultValue="toys" id="toys" />
+            <input
+              className="filter__radio"
+              type="radio"
+              name="type"
+              defaultValue="toys"
+              id="toys"
+              onClick={handleClick}
+            />
             <label className="filter__label filter__label_toys" htmlFor="toys">
               Игрушки
             </label>
 
-            <input className="filter__radio" type="radio" name="type" defaultValue="postcards" id="postcard" />
+            <input
+              className="filter__radio"
+              type="radio"
+              name="type"
+              defaultValue="postcards"
+              id="postcard"
+              onClick={handleClick}
+            />
             <label className="filter__label filter__label_postcard" htmlFor="postcard">
               Открытки
             </label>

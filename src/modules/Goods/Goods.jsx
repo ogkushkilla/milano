@@ -7,13 +7,13 @@ import { fetchGoods } from '../../redux/goodsSlice';
 
 export const Goods = () => {
   const dispatch = useDispatch();
-  const { items: goods, status: goodsStatus, error } = useSelector(state => state.goods);
+  const { items: goods, type, status: goodsStatus, error } = useSelector(state => state.goods);
 
   useEffect(() => {
     if (goodsStatus === 'idle') {
-      dispatch(fetchGoods());
+      dispatch(fetchGoods(`type=${type}`));
     }
-  }, [dispatch, goodsStatus]);
+  }, [dispatch, goodsStatus, type]);
 
   let content = null;
 
@@ -37,7 +37,7 @@ export const Goods = () => {
     <section className="goods">
       <div className="container goods__container">
         <div className="goods__box">
-          <h2 className="goods__title">Цветы</h2>
+          <h2 className="goods__title">{type === 'bouquets' ? 'Цветы' : type === 'toys' ? 'Игрушки' : 'Открытки'}</h2>
 
           {content}
         </div>

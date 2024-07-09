@@ -69,6 +69,7 @@
   }
 
   &__button {
+    border: 2px solid $light-orange;
     border-radius: 32px;
     padding: 8px 16px;
     min-width: 120px;
@@ -78,5 +79,11 @@
 
   &__button-text {
     display: none;
+  }
+
+  &__button-hover {
+    border: 2px solid $light-orange;
+    background-color: $white;
+    color: $light-orange;
   }
 }
