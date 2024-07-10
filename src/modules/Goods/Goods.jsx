@@ -1,19 +1,11 @@
 import './goods.scss';
 import { Cart } from '../Cart/Cart';
 import { GoodsCard } from '../GoodsCard/GoodsCard';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import { fetchGoods } from '../../redux/goodsSlice';
+import { useSelector } from 'react-redux';
 
 export const Goods = () => {
-  const dispatch = useDispatch();
-  const { items: goods, type, status: goodsStatus, error } = useSelector(state => state.goods);
-
-  useEffect(() => {
-    if (goodsStatus === 'idle') {
-      dispatch(fetchGoods(`type=${type}`));
-    }
-  }, [dispatch, goodsStatus, type]);
+  const { items: goods, status: goodsStatus, error } = useSelector(state => state.goods);
+  const { type } = useSelector(state => state.filter.filters);
 
   let content = null;
 

@@ -1,22 +1,52 @@
 import './filter.scss';
 import { Choices } from '../Choices/Choices';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { changeParams, fetchGoods } from '../../redux/goodsSlice';
+import { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchGoods } from '../../redux/goodsSlice';
+import { debounce, getFilterParams } from '../../utils';
+import { changeFilters } from '../../redux/filterSlice';
 
 export const Filter = () => {
   const dispatch = useDispatch();
+  const filters = useSelector(state => state.filter.filters);
   const [openChoice, setOpenChoice] = useState(null);
 
   const handleChoicesToggle = choice => {
     setOpenChoice(openChoice === choice ? null : choice);
   };
 
-  const handleClick = e => {
-    const target = e.target;
+  const prevFiltersRef = useRef({});
 
-    dispatch(fetchGoods(`type=${target.value}`));
-    dispatch(changeParams(target.value));
+  const debounceFetchGoods = useRef(
+    debounce(filters => {
+      dispatch(fetchGoods(filters));
+    }, 300),
+  ).current;
+
+  useEffect(() => {
+    const prevFilters = prevFiltersRef.current;
+    const filterParams = getFilterParams(filters);
+
+    if (prevFilters.type !== filters.type) {
+      dispatch(fetchGoods(filterParams));
+    } else {
+      debounceFetchGoods(filters);
+    }
+
+    prevFiltersRef.current = filters;
+  }, [dispatch, debounceFetchGoods, filters]);
+
+  const handleClick = ({ target }) => {
+    const { value } = target;
+    const newFilters = { ...filters, type: value, minPrice: '', maxPrice: '' };
+    dispatch(changeFilters(newFilters));
+    setOpenChoice(false);
+  };
+
+  const handleInput = ({ target }) => {
+    const { name, value } = target;
+    const newFilters = { ...filters, [name]: value ? parseInt(value) : '' };
+    changeFilters(newFilters);
   };
 
   return (
@@ -71,8 +101,22 @@ export const Filter = () => {
               handleChoicesToggle={() => handleChoicesToggle('price')}
             >
               <fieldset className="filter__price">
-                <input className="filter__input-price" type="text" name="minPrice" placeholder="от" />
-                <input className="filter__input-price" type="text" name="maxPrice" placeholder="до" />
+                <input
+                  className="filter__input-price"
+                  type="number"
+                  name="minPrice"
+                  placeholder="от"
+                  value={filters.minPrice}
+                  onInput={handleInput}
+                />
+                <input
+                  className="filter__input-price"
+                  type="number"
+                  name="maxPrice"
+                  placeholder="до"
+                  value={filters.maxPrice}
+                  onInput={handleInput}
+                />
               </fieldset>
             </Choices>
 

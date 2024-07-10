@@ -10,9 +10,7 @@ export const GoodsCard = ({ id, photoUrl, name, dateDelivery, price }) => {
     dispatch(addItemToCart({ id, photoUrl, name, dateDelivery, price }));
   };
 
-  const handlerButtonHover = e => {
-    const target = e.target;
-
+  const handlerButtonHover = ({ target }) => {
     if (target.textContent.includes('₽')) {
       target.classList.add('card__button-hover');
       target.textContent = 'В корзину';
