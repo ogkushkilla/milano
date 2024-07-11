@@ -30,7 +30,7 @@ export const Filter = () => {
     if (prevFilters.type !== filters.type) {
       dispatch(fetchGoods(filterParams));
     } else {
-      debounceFetchGoods(filters);
+      debounceFetchGoods(filterParams);
     }
 
     prevFiltersRef.current = filters;
@@ -46,7 +46,7 @@ export const Filter = () => {
   const handleInput = ({ target }) => {
     const { name, value } = target;
     const newFilters = { ...filters, [name]: value ? parseInt(value) : '' };
-    changeFilters(newFilters);
+    dispatch(changeFilters(newFilters));
   };
 
   return (
