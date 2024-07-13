@@ -11,7 +11,6 @@ export const fetchGoods = createAsyncThunk('goods/fetchGoods', async params => {
 const initialState = {
   items: [],
   status: 'idle',
-  type: 'bouquets',
   error: null,
 };
 

@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 
 export const Goods = () => {
   const { items: goods, status: goodsStatus, error } = useSelector(state => state.goods);
-  const { type } = useSelector(state => state.filter.filters);
+  const { title } = useSelector(state => state.filter);
 
   let content = null;
 
@@ -21,7 +21,13 @@ export const Goods = () => {
         ))}
       </ul>
     );
-  } else {
+  }
+
+  if (!goods.length) {
+    content = <p className="goods__empty">По вашему запросу ничего не найдено</p>;
+  }
+
+  if (goodsStatus === 'failed') {
     content = <p>{error}</p>;
   }
 
@@ -29,7 +35,7 @@ export const Goods = () => {
     <section className="goods">
       <div className="container goods__container">
         <div className="goods__box">
-          <h2 className="goods__title">{type === 'bouquets' ? 'Цветы' : type === 'toys' ? 'Игрушки' : 'Открытки'}</h2>
+          <h2 className="goods__title">{title}</h2>
 
           {content}
         </div>

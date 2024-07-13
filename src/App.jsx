@@ -7,13 +7,17 @@ import { Order } from './modules/Order/Order';
 import { Footer } from './modules/Footer/Footer';
 import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
-import { registerCart } from './redux/cartSlice';
+import { fetchCart, registerCart } from './redux/cartSlice';
 
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const initializeCart = async () => await dispatch(registerCart());
+    const initializeCart = async () => {
+      await dispatch(registerCart());
+      await dispatch(fetchCart());
+    };
+
     initializeCart();
   }, [dispatch]);
 

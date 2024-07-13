@@ -55,4 +55,8 @@
     color: $green;
     grid-column: 1 / -1;
   }
+
+  &__empty {
+    text-align: center;
+  }
 }

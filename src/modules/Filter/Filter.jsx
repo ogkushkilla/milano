@@ -4,18 +4,25 @@ import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchGoods } from '../../redux/goodsSlice';
 import { debounce, getFilterParams } from '../../utils';
-import { changeFilters } from '../../redux/filterSlice';
+import { changeFilters, changeTitle, changeType } from '../../redux/filterSlice';
+import { FilterRadio } from './FilterRadio';
 
 export const Filter = () => {
   const dispatch = useDispatch();
+  const type = useSelector(state => state.filter.type);
   const filters = useSelector(state => state.filter.filters);
+  const filterTypes = [
+    { type: 'bouquets', title: 'Цветы' },
+    { type: 'toys', title: 'Игрушки' },
+    { type: 'postcards', title: 'Открытки' },
+  ];
   const [openChoice, setOpenChoice] = useState(null);
 
   const handleChoicesToggle = choice => {
     setOpenChoice(openChoice === choice ? null : choice);
   };
 
-  const prevFiltersRef = useRef({});
+  const prevTypeRef = useRef(type);
 
   const debounceFetchGoods = useRef(
     debounce(filters => {
@@ -24,22 +31,28 @@ export const Filter = () => {
   ).current;
 
   useEffect(() => {
-    const prevFilters = prevFiltersRef.current;
-    const filterParams = getFilterParams(filters);
+    const prevType = prevTypeRef.current;
+    const filterParams = getFilterParams({ type, ...filters });
 
-    if (prevFilters.type !== filters.type) {
+    if (prevType !== type) {
       dispatch(fetchGoods(filterParams));
     } else {
       debounceFetchGoods(filterParams);
     }
 
-    prevFiltersRef.current = filters;
+    prevTypeRef.current = type;
   }, [dispatch, debounceFetchGoods, filters]);
 
-  const handleClick = ({ target }) => {
+  const handleTypeChange = ({ target }) => {
     const { value } = target;
-    const newFilters = { ...filters, type: value, minPrice: '', maxPrice: '' };
+    const newFilters = {
+      ...filters,
+      minPrice: '',
+      maxPrice: '',
+    };
+    dispatch(changeType(value));
     dispatch(changeFilters(newFilters));
+    dispatch(changeTitle(target.nextSibling.textContent));
     setOpenChoice(false);
   };
 
@@ -55,42 +68,15 @@ export const Filter = () => {
       <div className="container">
         <form className="filter__form">
           <fieldset className="filter__group">
-            <input
-              className="filter__radio"
-              type="radio"
-              name="type"
-              defaultValue="bouquets"
-              id="flower"
-              defaultChecked
-              onClick={handleClick}
-            />
-            <label className="filter__label filter__label_flower" htmlFor="flower">
-              Цветы
-            </label>
-
-            <input
-              className="filter__radio"
-              type="radio"
-              name="type"
-              defaultValue="toys"
-              id="toys"
-              onClick={handleClick}
-            />
-            <label className="filter__label filter__label_toys" htmlFor="toys">
-              Игрушки
-            </label>
-
-            <input
-              className="filter__radio"
-              type="radio"
-              name="type"
-              defaultValue="postcards"
-              id="postcard"
-              onClick={handleClick}
-            />
-            <label className="filter__label filter__label_postcard" htmlFor="postcard">
-              Открытки
-            </label>
+            {filterTypes.map(item => (
+              <FilterRadio
+                key={item.type}
+                filterType={type}
+                radioType={item.type}
+                radioTitle={item.title}
+                handleTypeChange={handleTypeChange}
+              />
+            ))}
           </fieldset>
 
           <fieldset className="filter__group filter__group_choices">

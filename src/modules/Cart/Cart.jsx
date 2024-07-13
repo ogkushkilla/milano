@@ -56,7 +56,9 @@ export const Cart = () => {
           <button className="cart__order-btn" onClick={handlerOpenOrder}>
             Оформить
           </button>
-          <p className="cart__price cart__price_total">0&nbsp;₽</p>
+          <p className="cart__price cart__price_total">
+            {cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)}&nbsp;₽
+          </p>
         </div>
       </div>
     </section>

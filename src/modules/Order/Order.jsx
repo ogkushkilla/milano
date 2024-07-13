@@ -1,23 +1,36 @@
 import { useDispatch, useSelector } from 'react-redux';
 import './order.scss';
 import { closeModal } from '../../redux/orderSlice';
+import { useCallback, useEffect } from 'react';
 
 export const Order = () => {
   const dispatch = useDispatch();
   const isOrderModalOpen = useSelector(state => state.order.isOpen);
   const isOrderSuccess = false;
 
-  const handlerClose = ({ target }) => {
-    if (target.matches('.order') || target.closest('.order__close')) {
-      dispatch(closeModal());
-    }
-  };
+  const handlerClose = useCallback(() => {
+    dispatch(closeModal());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const handleEsc = e => {
+      if (e.key === 'Escape') {
+        handlerClose(e);
+      }
+    };
+
+    document.addEventListener('keydown', handleEsc);
+
+    return () => {
+      document.removeEventListener('keydown', handleEsc);
+    };
+  }, [handlerClose]);
 
   if (!isOrderModalOpen) return null;
 
   return (
     <div className="order" onClick={handlerClose}>
-      <div className="order__wrapper">
+      <div className="order__wrapper" onClick={e => e.stopPropagation()}>
         {isOrderSuccess ? (
           <>
             <h2 className="order__title">Заказ оформлен!</h2>

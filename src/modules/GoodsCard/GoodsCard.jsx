@@ -7,7 +7,7 @@ export const GoodsCard = ({ id, photoUrl, name, dateDelivery, price }) => {
   const dispatch = useDispatch();
 
   const handlerAddToCart = () => {
-    dispatch(addItemToCart({ id, photoUrl, name, dateDelivery, price }));
+    dispatch(addItemToCart({ productId: id, quantity: 1 }));
   };
 
   const handlerButtonHover = ({ target }) => {

@@ -1,20 +1,54 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleCart } from '../../redux/cartSlice';
 import './header.scss';
+import { fetchGoods } from '../../redux/goodsSlice';
+import { useEffect, useRef, useState } from 'react';
+import { changeTitle, changeType } from '../../redux/filterSlice';
 
 export const Header = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.items);
+  const goodsTitle = useSelector(state => state.filter.title);
+  const [searchValue, setSearchValue] = useState('');
+  const searchResult = 'Результаты поиска';
+
+  const searchInput = useRef();
+
+  useEffect(() => {
+    const title = document.querySelector('.goods__title');
+
+    if (searchValue === '' && title.textContent === searchResult) {
+      title.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [searchValue, goodsTitle]);
 
   const handlerCartToggle = () => {
     dispatch(toggleCart());
   };
 
+  const handleSubmit = e => {
+    e.preventDefault();
+    if (searchValue.trim() !== '') {
+      dispatch(changeTitle(searchResult));
+      dispatch(fetchGoods({ search: searchValue }));
+      dispatch(changeType(''));
+      searchInput.current.value = '';
+      setSearchValue('');
+    }
+  };
+
   return (
     <header className="header">
       <div className="container header__container">
-        <form className="header__form" action="#">
-          <input className="header__input" type="search" name="search" placeholder="Букет из роз" />
+        <form className="header__form" action="#" onSubmit={handleSubmit}>
+          <input
+            className="header__input"
+            type="search"
+            name="search"
+            placeholder="Букет из роз"
+            ref={searchInput}
+            onInput={({ target }) => setSearchValue(target.value)}
+          />
 
           <button className="header__search-button" aria-label="начать поиск">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
