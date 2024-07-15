@@ -1,22 +1,22 @@
 import './cart.scss';
 import { CartItem } from '../CartItem/CartItem';
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleCart } from '../../redux/cartSlice';
-import { openModal } from '../../redux/orderSlice';
+import { toggleCart } from '../../redux/slices/cartSlice';
+import { openModal } from '../../redux/slices/orderSlice';
 import { useEffect, useRef } from 'react';
 
 export const Cart = () => {
   const dispatch = useDispatch();
-  const isOpen = useSelector(state => state.cart.isOpen);
+  const isCartOpen = useSelector(state => state.cart.isOpen);
   const cartItems = useSelector(state => state.cart.items);
 
   const cartRef = useRef();
 
   useEffect(() => {
-    if (isOpen) {
+    if (isCartOpen) {
       cartRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [isOpen]);
+  }, [isCartOpen]);
 
   const handlerCartClose = () => {
     dispatch(toggleCart(false));
@@ -26,7 +26,7 @@ export const Cart = () => {
     dispatch(openModal());
   };
 
-  if (!isOpen) return null;
+  if (!isCartOpen) return null;
 
   return (
     <section className="cart cart_open" ref={cartRef}>
@@ -53,7 +53,7 @@ export const Cart = () => {
         </ul>
 
         <div className="cart__footer">
-          <button className="cart__order-btn" onClick={handlerOpenOrder}>
+          <button className="cart__order-btn" onClick={handlerOpenOrder} disabled={!cartItems.length}>
             Оформить
           </button>
           <p className="cart__price cart__price_total">

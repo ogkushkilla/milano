@@ -23,7 +23,7 @@ export const Goods = () => {
     );
   }
 
-  if (!goods.length) {
+  if (goodsStatus === 'success' && !goods.length) {
     content = <p className="goods__empty">По вашему запросу ничего не найдено</p>;
   }
 

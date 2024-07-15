@@ -1,16 +1,56 @@
+import { useDispatch } from 'react-redux';
 import { API_URL } from '../../const';
+import { useState } from 'react';
+import { debounce } from '../../utils';
+import { addItemToCart } from '../../redux/thunks/addItemToCart';
 
-export const CartItem = ({ photoUrl, name, price }) => {
+export const CartItem = ({ id, photoUrl, name, price, quantity }) => {
+  const dispatch = useDispatch();
+  const [inputQuantity, setInputQuantity] = useState(quantity);
+
+  const debounceInputChange = debounce(newQuantity => {
+    dispatch(addItemToCart({ productId: id, quantity: newQuantity }));
+  }, 500);
+
+  const handleInputChange = ({ target }) => {
+    const newQuantity = parseInt(target.value);
+    setInputQuantity(newQuantity);
+    debounceInputChange(newQuantity);
+  };
+
+  const handleDecrement = () => {
+    const newQuantity = inputQuantity - 1;
+    setInputQuantity(newQuantity);
+    dispatch(addItemToCart({ productId: id, quantity: newQuantity }));
+  };
+
+  const handleIncrement = () => {
+    const newQuantity = inputQuantity + 1;
+    setInputQuantity(newQuantity);
+    dispatch(addItemToCart({ productId: id, quantity: newQuantity }));
+  };
+
   return (
     <>
       <img className="cart__img" src={`${API_URL}${photoUrl}`} alt={name} />
       <h4 className="cart__item-title">{name}</h4>
       <div className="cart__counter">
-        <button className="cart__counter-btn">-</button>
-        <input className="cart__counter-input" type="number" max="99" min="0" defaultValue="1" />
-        <button className="cart__counter-btn">+</button>
+        <button className="cart__counter-btn" onClick={handleDecrement}>
+          -
+        </button>
+        <input
+          className="cart__counter-input"
+          type="number"
+          max="99"
+          min="0"
+          value={inputQuantity}
+          onChange={handleInputChange}
+        />
+        <button className="cart__counter-btn" onClick={handleIncrement}>
+          +
+        </button>
       </div>
-      <p className="cart__price">{price}&nbsp;₽</p>
+      <p className="cart__price">{price * quantity}&nbsp;₽</p>
     </>
   );
 };

@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { toggleCart } from '../../redux/cartSlice';
+import { toggleCart } from '../../redux/slices/cartSlice';
 import './header.scss';
-import { fetchGoods } from '../../redux/goodsSlice';
 import { useEffect, useRef, useState } from 'react';
-import { changeTitle, changeType } from '../../redux/filterSlice';
+import { changeTitle, changeType } from '../../redux/slices/filterSlice';
+import { fetchGoods } from '../../redux/thunks/fetchGoods';
 
 export const Header = () => {
   const dispatch = useDispatch();
@@ -63,7 +63,7 @@ export const Header = () => {
         <img className="header__logo" src="/img/logo.svg" alt="Логотип Mirano Flower Boutique" />
 
         <button className="header__cart-button" onClick={handlerCartToggle}>
-          {cartItems.length}
+          {cartItems.reduce((acc, item) => acc + item.quantity, 0)}
         </button>
       </div>
     </header>

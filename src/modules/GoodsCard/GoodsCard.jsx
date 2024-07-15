@@ -1,13 +1,19 @@
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import './card.scss';
-import { addItemToCart } from '../../redux/cartSlice';
 import { API_URL } from '../../const';
+import { addItemToCart } from '../../redux/thunks/addItemToCart';
+import { toggleCart } from '../../redux/slices/cartSlice';
 
 export const GoodsCard = ({ id, photoUrl, name, dateDelivery, price }) => {
+  const isCartOpen = useSelector(state => state.cart.isOpen);
   const dispatch = useDispatch();
 
   const handlerAddToCart = () => {
-    dispatch(addItemToCart({ productId: id, quantity: 1 }));
+    dispatch(addItemToCart({ productId: id }));
+
+    if (!isCartOpen) {
+      dispatch(toggleCart());
+    }
   };
 
   const handlerButtonHover = ({ target }) => {
