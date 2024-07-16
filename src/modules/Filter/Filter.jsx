@@ -10,6 +10,7 @@ import { fetchGoods } from '../../redux/thunks/fetchGoods';
 export const Filter = () => {
   const dispatch = useDispatch();
   const type = useSelector(state => state.filter.type);
+  const search = useSelector(state => state.filter.search);
   const filters = useSelector(state => state.filter.filters);
   const categories = useSelector(state => state.goods.categories);
   const filterTypes = [
@@ -23,7 +24,8 @@ export const Filter = () => {
     setOpenChoice(openChoice === choice ? null : choice);
   };
 
-  const prevTypeRef = useRef(type);
+  const filterRef = useRef(null);
+  const prevFiltersRef = useRef(filters);
 
   const debounceFetchGoods = useRef(
     debounce(filters => {
@@ -32,21 +34,32 @@ export const Filter = () => {
   ).current;
 
   useEffect(() => {
-    const prevType = prevTypeRef.current;
-    const filterParams = getFilterParams({ type, ...filters });
+    if (filters !== prevFiltersRef.current || search) {
+      filterRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [filters, search]);
 
-    if (!filterParams.type) {
+  useEffect(() => {
+    const prevMinPrice = prevFiltersRef.current.minPrice;
+    const prevMaxPrice = prevFiltersRef.current.maxPrice;
+    const filterParams = getFilterParams({ type, search, ...filters });
+
+    if (!filterParams.type && !filterParams.search) {
       return;
     }
 
-    if (prevType !== type) {
-      dispatch(fetchGoods(filterParams));
-    } else {
+    if (prevMinPrice !== filters.minPrice || prevMaxPrice !== filters.maxPrice) {
       debounceFetchGoods(filterParams);
+    } else {
+      dispatch(fetchGoods(filterParams));
     }
 
-    prevTypeRef.current = type;
-  }, [dispatch, debounceFetchGoods, filters, type]);
+    if (filterParams.search) {
+      dispatch(changeTitle('Результаты поиска'));
+    }
+
+    prevFiltersRef.current = filters;
+  }, [dispatch, debounceFetchGoods, filters, type, search]);
 
   const handleTypeChange = ({ target }) => {
     const { value } = target;
@@ -72,7 +85,7 @@ export const Filter = () => {
   };
 
   return (
-    <section className="filter">
+    <section className="filter" ref={filterRef}>
       <h2 className="visually-hidden"></h2>
       <div className="container">
         <form className="filter__form">

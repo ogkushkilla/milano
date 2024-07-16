@@ -2,6 +2,7 @@ import './goods.scss';
 import { Cart } from '../Cart/Cart';
 import { GoodsCard } from '../GoodsCard/GoodsCard';
 import { useSelector } from 'react-redux';
+import { Preload } from '../Preload/Preload';
 
 export const Goods = () => {
   const { items: goods, status: goodsStatus, error } = useSelector(state => state.goods);
@@ -10,7 +11,7 @@ export const Goods = () => {
   let content = null;
 
   if (goodsStatus === 'loading') {
-    content = <p>Загрузка...</p>;
+    content = <Preload />;
   } else if (goodsStatus === 'success') {
     content = (
       <ul className="goods__list">
@@ -32,7 +33,7 @@ export const Goods = () => {
   }
 
   return (
-    <section className="goods">
+    <section className="goods" style={{ position: goodsStatus === 'loading' ? 'relative' : '' }}>
       <div className="container goods__container">
         <div className="goods__box">
           <h2 className="goods__title">{title}</h2>

@@ -2,25 +2,35 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toggleCart } from '../../redux/slices/cartSlice';
 import './header.scss';
 import { useEffect, useRef, useState } from 'react';
-import { changeTitle, changeType } from '../../redux/slices/filterSlice';
-import { fetchGoods } from '../../redux/thunks/fetchGoods';
+import { changeSearch } from '../../redux/slices/filterSlice';
+import { debounce } from '../../utils';
 
 export const Header = () => {
   const dispatch = useDispatch();
   const cartItems = useSelector(state => state.cart.items);
-  const goodsTitle = useSelector(state => state.filter.title);
   const [searchValue, setSearchValue] = useState('');
-  const searchResult = 'Результаты поиска';
 
-  const searchInput = useRef();
+  const searchInputRef = useRef();
+  const headerRef = useRef(null);
 
   useEffect(() => {
-    const title = document.querySelector('.goods__title');
+    document.body.style.paddingTop = `${headerRef.current.clientHeight}px`;
+    window.addEventListener(
+      'scroll',
+      debounce(() => {
+        if (window.scrollY > 300) {
+          document.body.style.paddingTop = `${headerRef.current.clientHeight}px`;
+          headerRef.current.classList.add('header_fixed');
+        } else {
+          headerRef.current.classList.remove('header_fixed');
+        }
+      }, 100),
+    );
 
-    if (searchValue === '' && title.textContent === searchResult) {
-      title.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [searchValue, goodsTitle]);
+    return () => {
+      window.removeEventListener('scroll', () => {});
+    };
+  });
 
   const handlerCartToggle = () => {
     dispatch(toggleCart());
@@ -29,16 +39,19 @@ export const Header = () => {
   const handleSubmit = e => {
     e.preventDefault();
     if (searchValue.trim() !== '') {
-      dispatch(changeTitle(searchResult));
-      dispatch(fetchGoods({ search: searchValue }));
-      dispatch(changeType(''));
-      searchInput.current.value = '';
+      searchInputRef.current.style.cssText = '';
+      dispatch(changeSearch(searchValue));
       setSearchValue('');
+    } else {
+      searchInputRef.current.style.cssText = `
+        outline: 2px solid tomato;
+        outlineOffset: 3px;
+      `;
     }
   };
 
   return (
-    <header className="header">
+    <header className="header" ref={headerRef}>
       <div className="container header__container">
         <form className="header__form" action="#" onSubmit={handleSubmit}>
           <input
@@ -46,8 +59,9 @@ export const Header = () => {
             type="search"
             name="search"
             placeholder="Букет из роз"
-            ref={searchInput}
-            onInput={({ target }) => setSearchValue(target.value)}
+            value={searchValue}
+            ref={searchInputRef}
+            onChange={({ target }) => setSearchValue(target.value)}
           />
 
           <button className="header__search-button" aria-label="начать поиск">

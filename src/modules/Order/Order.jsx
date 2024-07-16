@@ -150,7 +150,7 @@ export const Order = () => {
                   <label htmlFor="delivery">Дата доставки</label>
                   <input
                     className="order__input"
-                    type="data"
+                    type="date"
                     name="deliveryDate"
                     value={orderData.deliveryDate}
                     onChange={handleChange}

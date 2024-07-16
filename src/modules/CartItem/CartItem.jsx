@@ -1,21 +1,19 @@
 import { useDispatch } from 'react-redux';
 import { API_URL } from '../../const';
 import { useState } from 'react';
-import { debounce } from '../../utils';
+import { isNumber } from '../../utils';
 import { addItemToCart } from '../../redux/thunks/addItemToCart';
 
 export const CartItem = ({ id, photoUrl, name, price, quantity }) => {
   const dispatch = useDispatch();
   const [inputQuantity, setInputQuantity] = useState(quantity);
 
-  const debounceInputChange = debounce(newQuantity => {
-    dispatch(addItemToCart({ productId: id, quantity: newQuantity }));
-  }, 500);
-
   const handleInputChange = ({ target }) => {
     const newQuantity = parseInt(target.value);
     setInputQuantity(newQuantity);
-    debounceInputChange(newQuantity);
+    if (isNumber(newQuantity)) {
+      dispatch(addItemToCart({ productId: id, quantity: newQuantity }));
+    }
   };
 
   const handleDecrement = () => {
@@ -50,7 +48,7 @@ export const CartItem = ({ id, photoUrl, name, price, quantity }) => {
           +
         </button>
       </div>
-      <p className="cart__price">{price * quantity}&nbsp;₽</p>
+      <p className="cart__price">{inputQuantity ? price * quantity : 0}&nbsp;₽</p>
     </>
   );
 };

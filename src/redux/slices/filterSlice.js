@@ -8,6 +8,7 @@ const initialState = {
   },
   type: 'bouquets',
   title: 'Цветы',
+  search: '',
 };
 
 export const filterSlice = createSlice({
@@ -19,6 +20,7 @@ export const filterSlice = createSlice({
     },
     changeType: (state, action) => {
       state.type = action.payload;
+      state.search = '';
     },
     changeTitle: (state, action) => {
       state.title = action.payload;
@@ -26,9 +28,13 @@ export const filterSlice = createSlice({
     changeCategory: (state, action) => {
       state.filters.category = action.payload;
     },
+    changeSearch: (state, action) => {
+      state.type = '';
+      state.search = action.payload;
+    },
   },
 });
 
-export const { changeFilters, changeType, changeTitle, changeCategory } = filterSlice.actions;
+export const { changeFilters, changeType, changeTitle, changeCategory, changeSearch } = filterSlice.actions;
 
 export default filterSlice.reducer;
